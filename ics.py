@@ -38,13 +38,13 @@ class Schedule2ICS:
         data = {
             'from': 0,
             'to': 0,
-            'flag': 0
+            'flag': 1
         }
         info = re.search(week_pattern, timeinfo).group()
-        single = re.match('单周', info)
-        double = re.match('双周', info)
+        single = re.search('单周', info)
+        double = re.search('双周', info)
         if single != None:
-            data['flag'] = 1
+            data['flag'] = 2
         elif double != None:
             data['flag'] = 2
         dat = re.findall(r'(\d+)', info)
@@ -133,7 +133,7 @@ class Schedule2ICS:
             week_start = week['from']
             week_end = week['to']
             interval = week['flag']
-            count = (week_end - week_start + 1) if week['flag'] == '0' else (((week_end - week_start) / 2) + 1)
+            count = (week_end - week_start + 1) if interval == 1 else (((week_end - week_start) / 2) + 1)
             course_weekday = self.parseDay(one['timeinfo'])
             
             timeinfo = one['timeinfo'].split('{')[0]
@@ -144,7 +144,7 @@ class Schedule2ICS:
             course_period_end = int(course_period_list[course_period_num - 1])  # 最后一节课的课时号
             
             lesson_time = relativedelta(minutes=45)
-            dt_date = info.semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
+            dt_date = semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
             days=(course_weekday - 1))  # 课程日期
 
             dtstart_time = self.dirt_week[course_period_start]  # 上课时间
