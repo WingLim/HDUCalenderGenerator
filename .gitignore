@@ -1,1 +1,3 @@
 info.py
+__pycache__
+*.ics
