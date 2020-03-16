@@ -1,24 +1,27 @@
 import json
 import requests
 import re
+from datetime import datetime
 from lxml import etree
 from des import strEnc
 
 # 判断登录状态
 def login_status(response):
+    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if response.status_code == requests.codes.ok:
         selector = etree.HTML(response.content)
         state = selector.xpath('/html/head/title/text()')[0]
         if state == "正方教务管理系统":
-            print("登录成功")
+            print("{}: 登录成功".format(now_time))
             return True
         elif state == "HDU统一身份认证系统":
-            print("登录失败")
+            print("{}: 登录失败".format(now_time))
             return False
     else:
         print(response.status_code)
-        print("登录失败")
+        print("{}: 登录失败".format(now_time))
         return False
+
 # 获取学生名字
 def get_name(response):
     selector = etree.HTML(response.text)
@@ -53,17 +56,18 @@ class LoginCAS:
         response = self.s.get(self.index_url, headers=self.headers)
         selector = etree.HTML(response.content)
         template = selector.xpath("//*[@id='password_template']/text()")[0]
-        #print(template)
+        # print(template)
         lt = re.search('LT-.*-cas',template).group()
         execution = re.search('e[0-9]s[0-9]',template).group()
         return lt, execution
         
-
+    # 计算 rsa
     def caculate_rsa(self):
         total = self.number + self.password + self.data['lt']
         rsa = strEnc(total,"1","2","3")
         return rsa
-    
+
+    # 获取学生个人课表地址
     def get_schedule_url(self, response):
         selector = etree.HTML(response.content)
         schedule_url = selector.xpath("//*[@id='headDiv']/ul/li[6]/ul/li[2]/a/@href")[0]
