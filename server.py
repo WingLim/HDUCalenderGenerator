@@ -5,6 +5,14 @@ from aiohttp import web
 
 routes = web.RouteTableDef()
 
+@routes.get('/')
+async def hello(request):
+    await asyncio.sleep(0.1)
+    html = """
+        <h1>Wlecome to use HDU Calender Generator</h1>
+    """
+    return web.Response(body='{}'.format(html), headers={'content-type': 'text/html'})
+
 @routes.get('/{account}/{password}')
 async def entry(request):
     await asyncio.sleep(0.1)
