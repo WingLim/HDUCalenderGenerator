@@ -5,7 +5,7 @@ from aiohttp import web
 
 routes = web.RouteTableDef()
 
-@routes.get('/ics/{account}/{password}')
+@routes.get('/{account}/{password}')
 async def entry(request):
     await asyncio.sleep(0.1)
     account = request.match_info['account']
