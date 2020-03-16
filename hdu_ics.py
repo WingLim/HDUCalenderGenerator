@@ -2,22 +2,23 @@ import login_cas as lg
 import re
 import pytz
 import icalendar
+import info
 from lxml import etree
 from lxml.html import tostring
 from datetime import datetime, time
 from html.parser import HTMLParser
 from uuid import uuid1
 from dateutil.relativedelta import relativedelta
-from info import *
 
 
 class Schedule2ICS:
-    def __init__(self, stu_number, stu_password):
-        self.number = stu_number
+    def __init__(self, stu_account, stu_password, server=0):
+        self.account = stu_account
         self.password = stu_password
-        self.login = lg.LoginCAS(stu_number, stu_password)
+        self.login = lg.LoginCAS(stu_account, stu_password)
         self.url = "http://jxgl.hdu.edu.cn/"
         self.pattern = re.compile(r'<td[^>]*>(.*)</td>')
+        self.server = server
         self.dirt_week = {
             1: time(8,5),
             2: time(8,55),
@@ -144,7 +145,7 @@ class Schedule2ICS:
             course_period_end = int(course_period_list[course_period_num - 1])  # 最后一节课的课时号
             
             lesson_time = relativedelta(minutes=45)
-            dt_date = semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
+            dt_date = info.semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
             days=(course_weekday - 1))  # 课程日期
 
             dtstart_time = self.dirt_week[course_period_start]  # 上课时间
@@ -167,21 +168,22 @@ class Schedule2ICS:
             event.add('rrule', {'freq': 'weekly', 'interval': interval, 'count': count})
 
             calt.add_component(event)
-        with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
-            # file.write(calt.to_ical().decode('utf-8'))
-            file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
-
+        return calt
 
     def run(self):
         while not self.login.login():
             continue
-        self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.number
+        self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
         # print(response.text)
         raw_courses = self.exportCourse(response)
-        courses = self.cookCourse(raw_courses)
-        
+        calt = self.cookCourse(raw_courses)
+        if self.server == 0:
+            with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
+                file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
+        else:
+            return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
 
 if __name__ == "__main__":
-    spider = Schedule2ICS(account, password)
+    spider = Schedule2ICS(info.account, info.password)
     spider.run()
