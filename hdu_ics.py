@@ -12,12 +12,14 @@ from dateutil.relativedelta import relativedelta
 
 
 class Schedule2ICS:
-    def __init__(self, stu_account, stu_password, server=0):
+    def __init__(self, stu_account, stu_password, isserver=0):
         self.account = stu_account
         self.password = stu_password
         self.login = lg.LoginCAS(stu_account, stu_password)
         self.url = "http://jxgl.hdu.edu.cn/"
-        self.server = server
+        # 是否为服务器状态
+        self.isserver = isserver
+        # 上课时间表
         self.dirt_week = {
             1: time(8,5),
             2: time(8,55),
@@ -34,10 +36,23 @@ class Schedule2ICS:
         }
     
     def parseWeek(self, timeinfo):
+        """解析课程每周信息
+        Args:
+            timeinfo: 课程的时间信息
+        Returns:
+            一个字典，包含开始周，结束周以及是否单双周
+            flag 为 1 则为每周上课，flag 为 2 则为单/双周上课
+            例子:
+            {
+                'start': 1,
+                'end': 16,
+                'flag': 1
+            }
+        """
         week_pattern = re.compile(r'{[^}]+}')
         data = {
-            'from': 0,
-            'to': 0,
+            'start': 0,
+            'end': 0,
             'flag': 1
         }
         info = re.search(week_pattern, timeinfo).group()
@@ -49,11 +64,18 @@ class Schedule2ICS:
             data['flag'] = 2
         dat = re.findall(r'(\d+)', info)
         if dat and len(dat) >= 2:
-            data['from'] = int(dat[0])
-            data['to'] = int(dat [1])
+            data['start'] = int(dat[0])
+            data['end'] = int(dat [1])
         return data
 
     def parseDay(self, timeinfo):
+        """解析课程日期
+        解析课程在星期几上课
+        Args:
+            timeinfo: 课程的时间信息
+        Returns:
+            数字，周一到周日分别为 1 到 7
+        """
         word = timeinfo[1]
         weekday = {
             "一": 1,
@@ -117,43 +139,66 @@ class Schedule2ICS:
         # print(raw_courses)
         return raw_courses
     
-    def cookCourse(self, raw_courses):
+    def cookCourse(self, export_courses):
+        """处理课程信息为 ical
+        将导出后的课程信息转化成 ical 格式
+        Args:
+            export_courses: 经过处理后导出的课程信息数组
+        Returns:
+            icalendar 对象
+        """
         calt = icalendar.Calendar()
         calt['version'] = '2.0'
-        for one in raw_courses:
+        for one in export_courses:
             week = self.parseWeek(one['timeinfo'])
-            week_start = week['from']
-            week_end = week['to']
+            # 课程开始周
+            week_start = week['start']
+            # 课程结束周
+            week_end = week['end']
+            # 单双周标记
             interval = week['flag']
+            # 本学期该课程上课总数
             count = (week_end - week_start + 1) if interval == 1 else (((week_end - week_start) / 2) + 1)
             course_weekday = self.parseDay(one['timeinfo'])
             
             timeinfo = one['timeinfo'].split('{')[0]
-            course_period_regrx = re.compile(r'(\d+)')  # 编译正则
-            course_period_list = course_period_regrx.findall(timeinfo, 1)  # 得到一个课时的list
-            course_period_num = len(course_period_list)  # 一共几节课
-            course_period_start = int(course_period_list[0])  # 第一节课的课时号
-            course_period_end = int(course_period_list[course_period_num - 1])  # 最后一节课的课时号
+            course_period_regrx = re.compile(r'(\d+)')
+            course_period_list = course_period_regrx.findall(timeinfo, 1)
+            # 一共几节课
+            course_period_num = len(course_period_list)
+            # 第一节课是第几节
+            course_period_start = int(course_period_list[0])
+            # 最后一节是第几节
+            course_period_end = int(course_period_list[course_period_num - 1])
             
+            # 每节课持续时间
             lesson_time = relativedelta(minutes=45)
+            # 课程日期
             dt_date = info.semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
-            days=(course_weekday - 1))  # 课程日期
-
-            dtstart_time = self.dirt_week[course_period_start]  # 上课时间
-            dtend_time = self.dirt_week[course_period_end]  # 最后一节小课上课时间
+            days=(course_weekday - 1))
+            # 开始上课时间
+            dtstart_time = self.dirt_week[course_period_start]
+            # 最后一节课上课时间
+            dtend_time = self.dirt_week[course_period_end]
             
-            dtstart_datetime = datetime.combine(dt_date, dtstart_time, tzinfo=pytz.timezone("Asia/Shanghai"))  # 上课日期时间
-            dtend_datetime = datetime.combine(dt_date, dtend_time, tzinfo=pytz.timezone("Asia/Shanghai"))  # 下课日期时间
+            # 上课日期时间
+            dtstart_datetime = datetime.combine(dt_date, dtstart_time, tzinfo=pytz.timezone("Asia/Shanghai"))
+            # 下课日期时间
+            dtend_datetime = datetime.combine(dt_date, dtend_time, tzinfo=pytz.timezone("Asia/Shanghai"))
             dtend_datetime += lesson_time
 
             event = icalendar.Event()
-            event.add('summary', one['name']) # 标题/课程名
-            event.add('uid', str(uuid1()) + '@HDU') # UUID
-            event.add('dtstamp', datetime.now()) # 创建时间
+            # 标题/课程名
+            event.add('summary', one['name'])
+            # UUID 作为独立标识
+            event.add('uid', str(uuid1()) + '@HDU')
+            event.add('dtstamp', datetime.now())
+            # 上课地点
             event.add('location', one['location'])
+            # 详细信息
             event.add('description',
                   '第{}-{}节\r\n教师： {}\r\n教室: {}'.format(course_period_start, course_period_end, one['teacher'],
-                                                       one['location']))  # 教师名称
+                                                       one['location']))
             event.add('dtstart', dtstart_datetime)
             event.add('dtend', dtend_datetime)
             event.add('rrule', {'freq': 'weekly', 'interval': interval, 'count': count})
@@ -167,9 +212,9 @@ class Schedule2ICS:
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
         # print(response.text)
-        raw_courses = self.exportCourse(response)
-        calt = self.cookCourse(raw_courses)
-        if self.server == 0:
+        export_courses = self.exportCourse(response)
+        calt = self.cookCourse(export_courses)
+        if not self.isserver:
             with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
                 file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
         else:
