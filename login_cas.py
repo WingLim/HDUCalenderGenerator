@@ -1,6 +1,7 @@
 import json
 import requests
 import re
+import info
 from datetime import datetime
 from lxml import etree
 from des import strEnc
@@ -30,12 +31,12 @@ def get_name(response):
     return name
 
 class LoginCAS:
-    def __init__(self, stu_number, stu_password):
-        self.number = stu_number
+    def __init__(self, stu_account, stu_password):
+        self.account = stu_account
         self.password = stu_password
         self.name = ""
         self.index_url = 'http://cas.hdu.edu.cn/cas/login?service=http://jxgl.hdu.edu.cn/default.aspx'
-        self.zf_url = 'http://jxgl.hdu.edu.cn/xs_main.aspx?xh=' + self.number
+        self.zf_url = 'http://jxgl.hdu.edu.cn/xs_main.aspx?xh=' + self.account
         self.schedule_url = ""
         self.s = requests.session()
         self.headers = {
@@ -63,7 +64,7 @@ class LoginCAS:
         
     # 计算 rsa
     def caculate_rsa(self):
-        total = self.number + self.password + self.data['lt']
+        total = self.account + self.password + self.data['lt']
         rsa = strEnc(total,"1","2","3")
         return rsa
 
@@ -76,7 +77,7 @@ class LoginCAS:
     def login(self):
         self.data['lt'], self.data['execution'] = self.get_lt_execution()
         self.data['rsa'] = self.caculate_rsa()
-        self.data['ul'] = str(len(self.number))
+        self.data['ul'] = str(len(self.account))
         self.data['pl'] = str(len(self.password))
         response = self.s.post(self.index_url, headers=self.headers, data=self.data)
         self.headers['Referer'] = response.url
@@ -91,6 +92,5 @@ class LoginCAS:
             return False
 
 if __name__ == "__main__":
-    number, password = get_info()
-    spider = LoginCAS(number, password)
+    spider = LoginCAS(info.account, info.password)
     spider.login()
