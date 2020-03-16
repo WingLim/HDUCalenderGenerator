@@ -17,7 +17,6 @@ class Schedule2ICS:
         self.password = stu_password
         self.login = lg.LoginCAS(stu_account, stu_password)
         self.url = "http://jxgl.hdu.edu.cn/"
-        self.pattern = re.compile(r'<td[^>]*>(.*)</td>')
         self.server = server
         self.dirt_week = {
             1: time(8,5),
@@ -101,6 +100,7 @@ class Schedule2ICS:
         table = selector.xpath("//*[@id='Table1']")[0]
         raw_courses = []
         tds = table.xpath("//td")
+        course_pattern = re.compile(r'<td[^>]*>(.*)</td>')
         # 将课程信息数组转换为字典
         def convertArr(arr):
             key = ['name', 'timeinfo', 'teacher', 'location']
@@ -110,7 +110,7 @@ class Schedule2ICS:
             # 将 Element 对象转换成 string 字符串
             raw = HTMLParser().unescape(tostring(td).decode())
             # 用正则匹配获取 <td></td> 标签中的课程信息
-            reg = re.search(self.pattern, raw)
+            reg = re.search(course_pattern, raw)
             # 不存在则跳过
             if reg == None:
                 continue
