@@ -65,15 +65,6 @@ class Schedule2ICS:
             "日": 7,
         }
         return weekday[word]
-    
-    def parseTime(self, timeinfo):
-        
-        result = []
-        timeinfo = timeinfo.split('{')[0]
-        dat = re.findall(r'(\d+)', timeinfo)
-        for d in dat:
-            result.append(course_start[int(d)])
-        return result
 
     def exportCourse(self, response):
         """导出课程信息
