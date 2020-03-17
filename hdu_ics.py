@@ -216,7 +216,7 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
-    def run(self, filetype='ics', save=0, semester_start=info.semester_start):
+    def run(self, semester_start=info.semester_start, filetype='ics', save=0):
         # 登录
         while not self.login.login():
             continue

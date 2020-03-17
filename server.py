@@ -12,7 +12,7 @@ def ics():
     account = request.form['account']
     password = request.form['password']
     semester_start = request.form['date']
-    print(semester_start)
+    # print(semester_start)
     spider = hdu_ics.Schedule2ICS(account, password, 1)
     result = spider.run(semester_start)
     response = make_response(result)
@@ -27,15 +27,13 @@ def json():
     save = request.args.get('save')
     semester_start = request.args.get('date')
     spider = hdu_ics.Schedule2ICS(account, password, 1)
-    result = spider.run('json', save, semester_start)
+    result = spider.run(semester_start, 'json', save)
     if save:
         # 跳转到保存地址
         return redirect(url_for('static', filename = account + '.json'))
     else:
         # 直接返回 json 数据
         return make_response(jsonify(result))
-
-    
 
 if __name__ == "__main__":
     port = (os.environ['HDUCPORT'] if 'HDUCPORT' in os.environ else 3000)
