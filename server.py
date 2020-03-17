@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, make_response, jsonify, url_for, redirect
 import hdu_ics
 import os
-app = Flask(__name__, static_url_path='/schdule')
+app = Flask(__name__, static_url_path='/schedule')
 
-@app.route('/schdule', methods=['GET'])
+@app.route('/schedule', methods=['GET'])
 def index():
     return render_template('index.html')
 
-@app.route('/schdule/ics', methods=['POST'])
+@app.route('/schedule/ics', methods=['POST'])
 def ics():
     account = request.form['account']
     password = request.form['password']
@@ -20,7 +20,7 @@ def ics():
     response.headers['Content-Disposition'] = "attachment; filename=\"{}.ics\"".format(account)
     return response
 
-@app.route('/schdule/json', methods=['GET'])
+@app.route('/schedule/json', methods=['GET'])
 def json():
     account = request.args.get('xh')
     password = request.args.get('pwd')
