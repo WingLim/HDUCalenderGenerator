@@ -22,15 +22,17 @@ def ics():
 
 @app.route('/schdule/json', methods=['GET'])
 def json():
-    account = request.args.get('account')
-    password = request.args.get('password')
+    account = request.args.get('xh')
+    password = request.args.get('pwd')
     save = request.args.get('save')
     semester_start = request.args.get('date')
     spider = hdu_ics.Schedule2ICS(account, password, 1)
     result = spider.run('json', save, semester_start)
     if save:
+        # 跳转到保存地址
         return redirect(url_for('static', filename = account + '.json'))
     else:
+        # 直接返回 json 数据
         return make_response(jsonify(result))
 
     
