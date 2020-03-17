@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, make_response
 import hdu_ics
+import os
 app = Flask(__name__)
 
 @app.route('/ics', methods=['POST', 'GET'])
@@ -17,4 +18,5 @@ def hello():
         return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=9898)
+    port = os.environ['PORT'] if 'PORT' in os.environ else: port = 9898
+    app.run(debug=True, host='0.0.0.0', port=port)
