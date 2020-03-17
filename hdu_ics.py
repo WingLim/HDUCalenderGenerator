@@ -231,11 +231,8 @@ class Schedule2ICS:
                     file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
             else:
                 return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
-        elif filetype == 'json':
-            if not self.isserver:
-                with open('output.json', 'w+', encoding='utf-8', newline='') as file:
-                    file.write(str(export_courses))
-            else:
+        # json 格式只用于 API 服务
+        elif filetype == 'json' and self.isserver:
                 return export_courses
 
 if __name__ == "__main__":

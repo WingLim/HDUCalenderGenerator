@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response
+from flask import Flask, render_template, request, make_response, jsonify
 import hdu_ics
 import os
 app = Flask(__name__)
@@ -19,6 +19,18 @@ def ics():
     response.headers['Content-Type'] = 'text/calendar'
     response.headers['Content-Disposition'] = "attachment; filename=\"{}.ics\"".format(account)
     return response
+
+@app.route('/schdule/json', methods=['GET'])
+def json():
+    account = request.args.get('account')
+    password = request.args.get('password')
+    print(account)
+    print(password)
+    semester_start = request.args.get('date')
+    spider = hdu_ics.Schedule2ICS(account, password, 1)
+    result = spider.run('json', semester_start)
+    return make_response(jsonify(result))
+
     
 
 if __name__ == "__main__":
