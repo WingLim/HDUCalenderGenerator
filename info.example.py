@@ -3,9 +3,7 @@ import os
 
 if 'SEMESTER_START' in os.environ:
     start = os.environ['SEMESTER_START'].split('-')
-    if len(start) < 3:
-        break
-    else:
+    if len(start) == 3:
         semester_start = date(start[0], start[1], start[2])
 else:
     # 学期开始时间
