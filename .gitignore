@@ -4,3 +4,4 @@ __pycache__
 *.json
 .python-version
 .vscode
+.~README.md
