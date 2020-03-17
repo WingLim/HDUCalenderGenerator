@@ -342,11 +342,6 @@
             if (e.keyCode == 13) {
                 generate();
             }
-            if (password.value != '') {
-                show_pwd.style.display = "block"
-            } else {
-                show_pwd.style.display = "none"
-            }
         })
         window.addEventListener('load', function () {
             account.value = window.localStorage.getItem('account');
