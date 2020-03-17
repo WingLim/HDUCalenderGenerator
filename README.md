@@ -30,11 +30,73 @@ password = ""
 $ python hdu_ics.py
 ```
 
+## 使用在线服务
+https://api.limxw.com/schdule
+
 ## 使用 API
-在对应部分填入账号和密码，该 API 不会记录你的个人信息，如果担心泄露隐私，则在本地使用或自行搭建
-https://api.limxw.com/ics/{account}/{password}
+### 请求
+```
+GET https://api.limxw.com/schdule/json?xh={$学号}&pwd={$密码}&save={$bool}
+```
+### 参数说明
+
+| 参数名 | 默认值 | 类型   | 说明                       |
+| ------ | ------ | ------ | -------------------------- |
+| xh     | -      | string | 登录数字杭电的学号         |
+| pwd    | -      | string | 登录数字杭电的密码         |
+| save   | 0      | bool   | 是否将课程信息保存在服务器 |
+
+PS：即使选择保存，也不保证数据的可持续性，因为本来是拿来个自己用。
+
+PS：如果密码中含 `+` 请转义成 `%3B`
+
+### 返回
+
+```
+[
+	{
+		"name": "计算机网络（甲）", 
+		"timeinfo": "周一第1,2节{第1-16周}", 				"teacher": "徐明", 
+		"location": "第7教研楼北110"
+	},
+	...
+]
+```
+
+### 样例
+
+```
+GET https://api.limxw.com/schdule/json?xh=18011111&pwd=123456
+```
+
+
+
+
+
 
 ## 搭建 API 服务
+
+### 使用 Docker 搭建
+
+```bash
+$ docker pull winglim/hducalgen
+$ docker run -itd \
+	--name hducalgen 
+	-p 3000:3000 
+	winglim/hducalgen
+```
+
+#### Docker 可选环境变量
+
+| 名词           | 默认值    | 说明                      |
+| -------------- | --------- | ------------------------- |
+| HDUCPORT       | 3000      | 服务开启的端口            |
+| HDUCDEBUG      | True      | Flask 是否开启 debug 模式 |
+| SEMESTER_START | 2020-2-24 | 学期开始日期              |
+
+注：`SEMESTER_START` 要参照默认值格式 `YYYY-M-DD`
+
+### 服务器上搭建
 
 > 同本地使用前两步
 
