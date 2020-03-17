@@ -31,12 +31,12 @@ $ python hdu_ics.py
 ```
 
 ## 使用在线服务
-https://api.limxw.com/schdule
+https://api.limxw.com/schedule
 
 ## 使用 API
 ### 请求
 ```
-GET https://api.limxw.com/schdule/json?xh={$学号}&pwd={$密码}&save={$bool}
+GET https://api.limxw.com/schedule/json?xh={$学号}&pwd={$密码}&save={$bool}
 ```
 ### 参数说明
 
@@ -66,7 +66,7 @@ PS：如果密码中含 `+` 请转义成 `%3B`
 ### 样例
 
 ```
-GET https://api.limxw.com/schdule/json?xh=18011111&pwd=123456
+GET https://api.limxw.com/schedule/json?xh=18011111&pwd=123456
 ```
 
 
