@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, make_response
 import hdu_ics
 app = Flask(__name__)
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/ics', methods=['POST', 'GET'])
 def hello():
     if request.method == 'POST':
         account = request.form['account']
