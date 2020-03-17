@@ -18,6 +18,6 @@ def hello():
         return render_template('index.html')
 
 if __name__ == "__main__":
-    port = (os.environ['PORT'] if 'PORT' in os.environ else 9898)
+    port = (os.environ['PORT'] if 'PORT' in os.environ else 3000)
     isdebug = (os.environ['DEBUG'] if 'DEBUG' in os.environ else False)
     app.run(debug=isdebug, host='0.0.0.0', port=port)
