@@ -19,4 +19,5 @@ def hello():
 
 if __name__ == "__main__":
     port = (os.environ['PORT'] if 'PORT' in os.environ else 9898)
-    app.run(debug=True, host='0.0.0.0', port=port)
+    isdebug = (os.environ['DEBUG'] if 'DEBUG' in os.environ else False)
+    app.run(debug=isdebug, host='0.0.0.0', port=port)
