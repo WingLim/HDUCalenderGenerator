@@ -14,8 +14,7 @@ RUN apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev \
     && cp info.example.py info.py \
     && pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 清理库和缓存
-RUN apk del --no-cache gcc musl-dev libxml2-dev libxslt-dev \
-    && rm -rf /tmp/* /var/cache/apk/*
+# 缓存
+RUN rm -rf /tmp/* /var/cache/apk/*
 
 ENTRYPOINT [ "python", "server.py" ]
