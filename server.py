@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, make_response, jsonify
+from flask import Flask, render_template, request, make_response, jsonify, url_for, redirect
 import hdu_ics
 import os
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/schdule')
 
 @app.route('/schdule', methods=['GET'])
 def index():
@@ -24,12 +24,14 @@ def ics():
 def json():
     account = request.args.get('account')
     password = request.args.get('password')
-    print(account)
-    print(password)
+    save = request.args.get('save')
     semester_start = request.args.get('date')
     spider = hdu_ics.Schedule2ICS(account, password, 1)
-    result = spider.run('json', semester_start)
-    return make_response(jsonify(result))
+    result = spider.run('json', save, semester_start)
+    if save:
+        return redirect(url_for('static', filename = account + '.json'))
+    else:
+        return make_response(jsonify(result))
 
     
 

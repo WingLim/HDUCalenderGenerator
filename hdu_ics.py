@@ -216,7 +216,7 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
-    def run(self, filetype='ics', semester_start=info.semester_start):
+    def run(self, filetype='ics', save=0, semester_start=info.semester_start):
         while not self.login.login():
             continue
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
@@ -233,6 +233,12 @@ class Schedule2ICS:
                 return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
         # json 格式只用于 API 服务
         elif filetype == 'json' and self.isserver:
+            if save:
+                filename = self.account + '.json'
+                with open('static/' + filename, 'w+', encoding='utf-8', newline='') as file:
+                    file.write(str(export_courses).replace("'",'"'))
+                return filename
+            else:
                 return export_courses
 
 if __name__ == "__main__":
