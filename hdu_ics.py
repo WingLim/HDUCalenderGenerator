@@ -5,7 +5,7 @@ import icalendar
 import info
 from lxml import etree
 from lxml.html import tostring
-from datetime import datetime, time
+from datetime import datetime, time, date
 from html.parser import HTMLParser
 from uuid import uuid1
 from dateutil.relativedelta import relativedelta
@@ -88,6 +88,15 @@ class Schedule2ICS:
         }
         return weekday[word]
 
+    def parseSemesterStart(self, semester_start):
+        if isinstance(semester_start, str):
+            start = semester_start.split('-')
+            start = list(map(int, start))
+            result = date(start[0], start[1], start[2])
+        else:
+            result = semester_start
+        return result
+
     def exportCourse(self, response):
         """导出课程信息
         Args:
@@ -139,11 +148,12 @@ class Schedule2ICS:
         # print(raw_courses)
         return raw_courses
     
-    def cookCourse(self, export_courses):
+    def cookCourse(self, export_courses, semester_start):
         """处理课程信息为 ical
         将导出后的课程信息转化成 ical 格式
         Args:
             export_courses: 经过处理后导出的课程信息数组
+            semester_start: 开始上课的第一天
         Returns:
             icalendar 对象
         """
@@ -174,7 +184,7 @@ class Schedule2ICS:
             # 每节课持续时间
             lesson_time = relativedelta(minutes=45)
             # 课程日期
-            dt_date = info.semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
+            dt_date = semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
             days=(course_weekday - 1))
             # 开始上课时间
             dtstart_time = self.dirt_week[course_period_start]
@@ -206,14 +216,15 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
-    def run(self):
+    def run(self, semester_start=info.semester_start):
         while not self.login.login():
             continue
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
         # print(response.text)
         export_courses = self.exportCourse(response)
-        calt = self.cookCourse(export_courses)
+        semester_start = self.parseSemesterStart(semester_start)
+        calt = self.cookCourse(export_courses, semester_start)
         if not self.isserver:
             with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
                 file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())

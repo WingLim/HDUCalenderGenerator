@@ -80,7 +80,7 @@
                             <div class="card-header">
                                 <h3>生成课程日历</h3>
                             </div>
-                            <form action="/ics" method="POST" class="needs-validation" novalidate>
+                            <form action="/schdule/ics" method="POST" class="needs-validation" novalidate>
                                 <div class="card-body">
                                     <div class="form-group login-form-item">
                                         <label for="account">学号</label>
@@ -156,12 +156,6 @@
                 window.localStorage.setItem('account', account.value);
                 window.localStorage.setItem('password', password.value);
                 window.localStorage.setItem('remember', true);
-            } else {
-                window.localStorage.setItem('account', '');
-                window.localStorage.setItem('password', '');
-                window.localStorage.setItem('remember', false);
-                account.value = '';
-                password.value = ''
             }
         }
         document.getElementById('generate').addEventListener('click', function () {
