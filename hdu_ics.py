@@ -217,8 +217,10 @@ class Schedule2ICS:
         return calt
 
     def run(self, filetype='ics', save=0, semester_start=info.semester_start):
+        # 登录
         while not self.login.login():
             continue
+        # 跳转到个人课表页面，获取 HTML 内容
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
         # print(response.text)
@@ -234,11 +236,13 @@ class Schedule2ICS:
         # json 格式只用于 API 服务
         elif filetype == 'json' and self.isserver:
             if save:
+                # 如果保存，则写入到 static/学号.json 中
                 filename = self.account + '.json'
                 with open('static/' + filename, 'w+', encoding='utf-8', newline='') as file:
                     file.write(str(export_courses).replace("'",'"'))
                 return filename
             else:
+                # 不保存则直接返回 list
                 return export_courses
 
 if __name__ == "__main__":
