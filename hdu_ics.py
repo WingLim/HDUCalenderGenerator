@@ -216,20 +216,27 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
-    def run(self, semester_start=info.semester_start):
+    def run(self, filetype='ics', semester_start=info.semester_start):
         while not self.login.login():
             continue
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
         # print(response.text)
         export_courses = self.exportCourse(response)
-        semester_start = self.parseSemesterStart(semester_start)
-        calt = self.cookCourse(export_courses, semester_start)
-        if not self.isserver:
-            with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
-                file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
-        else:
-            return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
+        if filetype == 'ics':
+            semester_start = self.parseSemesterStart(semester_start)
+            calt = self.cookCourse(export_courses, semester_start)
+            if not self.isserver:
+                with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
+                    file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
+            else:
+                return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
+        elif filetype == 'json':
+            if not self.isserver:
+                with open('output.json', 'w+', encoding='utf-8', newline='') as file:
+                    file.write(str(export_courses))
+            else:
+                return export_courses
 
 if __name__ == "__main__":
     spider = Schedule2ICS(info.account, info.password)

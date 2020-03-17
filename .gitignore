@@ -1,5 +1,6 @@
 info.py
 __pycache__
 *.ics
+*.json
 .python-version
 .vscode
