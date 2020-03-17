@@ -62,9 +62,11 @@
             background-color: transparent;
             padding: 20px 25px;
         }
+
         #password {
             position: relative;
         }
+
         #hide_pwd {
             position: absolute;
             right: 5%;
@@ -72,19 +74,73 @@
             z-index: 10;
             cursor: pointer;
         }
+
         #hide_pwd svg {
             width: 24px;
             height: 24px;
         }
+
         #hide_pwd #show {
             display: none;
         }
+
         #hide_pwd #hide {
             display: none;
         }
+
         .bullet {
             display: inline;
             margin: 0 4px;
+        }
+
+        #tooltip {
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: none;
+        }
+
+        #hint {
+            position: absolute;
+            right: 5%;
+            top: 5%;
+        }
+
+        #hint svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        #arrow,
+        #arrow::before {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            z-index: -1;
+        }
+
+        #arrow::before {
+            content: '';
+            transform: rotate(45deg);
+            background: #333;
+        }
+
+        #tooltip[data-popper-placement^='top']>#arrow {
+            bottom: -4px;
+        }
+
+        #tooltip[data-popper-placement^='bottom']>#arrow {
+            top: -4px;
+        }
+
+        #tooltip[data-popper-placement^='left']>#arrow {
+            right: -4px;
+        }
+
+        #tooltip[data-popper-placement^='right']>#arrow {
+            left: -4px;
         }
     </style>
 
@@ -95,13 +151,26 @@
         <section class="section">
             <div class="container mt-5">
                 <div class="row">
-                    <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
-                        <div class="alert alert-warning" role="alert">
-                            该工具不会收集你的账号数据，请放心使用。
-                        </div>
+                    <div
+                        class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                         <div class="card card-primary">
                             <div class="card-header">
                                 <h3>生成课程日历</h3>
+                            </div>
+                            <div id="hint">
+                                <svg class="bi bi-alert-square-fill" width="1em" height="1em" viewBox="0 0 20 20"
+                                    fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm7.002 9a1 1 0 112 0 1 1 0 01-2 0zM10 6a.905.905 0 00-.9.995l.35 3.507a.553.553 0 001.1 0l.35-3.507A.905.905 0 0010 6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div id="tooltip" role="tooltip">
+                                该工具不会收集你的账号数据，请放心使用。<br />
+                                你可以通过下列方式来获取 json 版课程信息。<br />
+                                https://api.limxw.com/schdule/json?xh={学号}&pwd={密码} <br />
+                                更多详情请查看 <a href="https://github.com/WingLim/HDUCalenderGenerator#%E4%BD%BF%E7%94%A8-api" target="blank">HDUCalenderGenerator</a>
+                                <div id="arrow" data-popper-arrow></div>
                             </div>
                             <form action="/schdule/ics" method="POST" class="needs-validation" novalidate>
                                 <div class="card-body">
@@ -121,18 +190,34 @@
                                         <div class="input-group">
                                             <input id="password" type="password" class="form-control" name="password"
                                                 tabindex="2" required>
-                                                <div id="hide_pwd">
-                                                    <svg id="show" class="bi bi-eye" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd" d="M18 10s-3-5.5-8-5.5S2 10 2 10s3 5.5 8 5.5 8-5.5 8-5.5zM3.173 10a13.133 13.133 0 001.66 2.043C6.12 13.332 7.88 14.5 10 14.5c2.12 0 3.879-1.168 5.168-2.457A13.133 13.133 0 0016.828 10a13.133 13.133 0 00-1.66-2.043C13.879 6.668 12.119 5.5 10 5.5c-2.12 0-3.879 1.168-5.168 2.457A13.133 13.133 0 003.172 10z" clip-rule="evenodd"></path>
-                                                        <path fill-rule="evenodd" d="M10 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM6.5 10a3.5 3.5 0 117 0 3.5 3.5 0 01-7 0z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                    <svg id="hide" class="bi bi-eye-slash" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M15.359 13.238C17.06 11.72 18 10 18 10s-3-5.5-8-5.5a7.028 7.028 0 00-2.79.588l.77.771A5.944 5.944 0 0110 5.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0116.828 10c-.058.087-.122.183-.195.288a13.14 13.14 0 01-1.465 1.755c-.165.165-.337.328-.517.486l.708.709z"></path>
-                                                        <path d="M13.297 11.176a3.5 3.5 0 00-4.474-4.474l.823.823a2.5 2.5 0 012.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 01-4.474-4.474l.823.823a2.5 2.5 0 002.829 2.829z"></path>
-                                                        <path d="M5.35 7.47c-.18.16-.353.322-.518.487A13.134 13.134 0 003.172 10l.195.288c.335.48.83 1.12 1.465 1.755C6.121 13.332 7.881 14.5 10 14.5c.716 0 1.39-.133 2.02-.36l.77.772A7.027 7.027 0 0110 15.5c-5 0-8-5.5-8-5.5s.939-1.721 2.641-3.238l.708.709z"></path>
-                                                        <path fill-rule="evenodd" d="M15.646 16.354l-12-12 .708-.708 12 12-.708.707z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </div>
+                                            <div id="hide_pwd">
+                                                <svg id="show" class="bi bi-eye" width="1em" height="1em"
+                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                        d="M18 10s-3-5.5-8-5.5S2 10 2 10s3 5.5 8 5.5 8-5.5 8-5.5zM3.173 10a13.133 13.133 0 001.66 2.043C6.12 13.332 7.88 14.5 10 14.5c2.12 0 3.879-1.168 5.168-2.457A13.133 13.133 0 0016.828 10a13.133 13.133 0 00-1.66-2.043C13.879 6.668 12.119 5.5 10 5.5c-2.12 0-3.879 1.168-5.168 2.457A13.133 13.133 0 003.172 10z"
+                                                        clip-rule="evenodd"></path>
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 7.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM6.5 10a3.5 3.5 0 117 0 3.5 3.5 0 01-7 0z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                                <svg id="hide" class="bi bi-eye-slash" width="1em" height="1em"
+                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M15.359 13.238C17.06 11.72 18 10 18 10s-3-5.5-8-5.5a7.028 7.028 0 00-2.79.588l.77.771A5.944 5.944 0 0110 5.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0116.828 10c-.058.087-.122.183-.195.288a13.14 13.14 0 01-1.465 1.755c-.165.165-.337.328-.517.486l.708.709z">
+                                                    </path>
+                                                    <path
+                                                        d="M13.297 11.176a3.5 3.5 0 00-4.474-4.474l.823.823a2.5 2.5 0 012.829 2.829l.822.822zm-2.943 1.299l.822.822a3.5 3.5 0 01-4.474-4.474l.823.823a2.5 2.5 0 002.829 2.829z">
+                                                    </path>
+                                                    <path
+                                                        d="M5.35 7.47c-.18.16-.353.322-.518.487A13.134 13.134 0 003.172 10l.195.288c.335.48.83 1.12 1.465 1.755C6.121 13.332 7.881 14.5 10 14.5c.716 0 1.39-.133 2.02-.36l.77.772A7.027 7.027 0 0110 15.5c-5 0-8-5.5-8-5.5s.939-1.721 2.641-3.238l.708.709z">
+                                                    </path>
+                                                    <path fill-rule="evenodd"
+                                                        d="M15.646 16.354l-12-12 .708-.708 12 12-.708.707z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
                                             <div class="invalid-feedback">
                                                 请填写密码
                                             </div>
@@ -143,8 +228,9 @@
                                         <div class="d-block">
                                             <label for="datetimepicker" class="control-label">正式上课第一天</label>
                                         </div>
-                                        <input type='text' name="date" id="datetimepicker" tabindex="3" class="form-control" placeholder="选择日期..." />
-                                        
+                                        <input type='text' name="date" id="datetimepicker" tabindex="3"
+                                            class="form-control" placeholder="选择日期..." />
+
                                     </div>
 
                                     <div class="form-group login-form-item">
@@ -154,7 +240,7 @@
                                             <label class="custom-control-label" for="remember-me">记住我</label>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group">
                                         <button type="submit" id="generate"
                                             class="btn btn-primary btn-lg btn-block generate" tabindex="5">
@@ -168,7 +254,8 @@
                     <div class="simple-footer">
                         Copyright &copy; 2020 <a href="https://limxw.com">WingLim</a>
                         <div class="mt-2">
-                            Open Source at <a href="https://github.com/WingLim/HDUCalenderGenerator" target="blank">HDUCalenderGenerator</a>
+                            Open Source at <a href="https://github.com/WingLim/HDUCalenderGenerator"
+                                target="blank">HDUCalenderGenerator</a>
                         </div>
                     </div>
                 </div>
@@ -178,7 +265,46 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.3/dist/l10n/zh.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script>
+
+        const hint = document.querySelector('#hint');
+        const tooltip = document.querySelector('#tooltip');
+
+        let popperInstance = null;
+
+        function create() {
+            popperInstance = Popper.createPopper(hint, tooltip, {
+                placement: 'right',
+                modifiers: [
+                    {
+                        name: 'offset',
+                        options: {
+                            offset: [0, 8],
+                        },
+                    },
+                ],
+            });
+        }
+
+        function destroy() {
+            if (popperInstance) {
+                popperInstance.destroy();
+                popperInstance = null;
+            }
+        }
+
+        hint.addEventListener('click', function(){
+            if (tooltip.style.display == "none") {
+                tooltip.style.display= "block"
+                create();
+            } else {
+                tooltip.style.display= "none"
+                destroy();
+            }
+        });
+        
+
         const optional_config = {
             defaultDate: "2020-2-24",
             dateFormat: "Y-m-d",
@@ -188,17 +314,17 @@
         const account = document.getElementById('account')
         const password = document.getElementById('password')
         const remember = document.getElementById("remember-me")
-        const show = document.querySelector("#hide_pwd>#show")
-        const hide = document.querySelector("#hide_pwd>#hide")
-        show.addEventListener('click', function(){
+        const show_pwd = document.querySelector("#hide_pwd>#show")
+        const hide_pwd = document.querySelector("#hide_pwd>#hide")
+        show_pwd.addEventListener('click', function () {
             password.type = "text"
-            show.style.display="none"
-            hide.style.display="block"
+            show_pwd.style.display = "none"
+            hide_pwd.style.display = "block"
         })
-        hide.addEventListener('click', function(){
+        hide_pwd.addEventListener('click', function () {
             password.type = "password"
-            hide.style.display="none"
-            show.style.display="block"
+            hide_pwd.style.display = "none"
+            show_pwd.style.display = "block"
         })
         function generate() {
             if (!password.value || !account.value) {
@@ -217,10 +343,10 @@
             if (e.keyCode == 13) {
                 generate();
             }
-            if (password.value != ''){
-                show.style.display="block"
+            if (password.value != '') {
+                show_pwd.style.display = "block"
             } else {
-                show.style.display="none"
+                show_pwd.style.display = "none"
             }
         })
         window.addEventListener('load', function () {
