@@ -38,6 +38,6 @@ def json():
     
 
 if __name__ == "__main__":
-    port = (os.environ['PORT'] if 'PORT' in os.environ else 3000)
-    isdebug = (os.environ['DEBUG'] if 'DEBUG' in os.environ else True)
+    port = (os.environ['HDUCPORT'] if 'HDUCPORT' in os.environ else 3000)
+    isdebug = (os.environ['HDUCDEBUG'] if 'HDUCDEBUG' in os.environ else True)
     app.run(debug=isdebug, host='0.0.0.0', port=port)
