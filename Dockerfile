@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7.7-alpine
 
 # 使用清华镜像源
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
