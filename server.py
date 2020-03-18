@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, make_response, jsonify, url_for, redirect
-import hdu_ics
+from HDUCal.hdu_ics import Schedule2ICS
 import os
 app = Flask(__name__, static_url_path='/schedule')
 
@@ -13,7 +13,7 @@ def ics():
     password = request.form['password']
     semester_start = request.form['date']
     # print(semester_start)
-    spider = hdu_ics.Schedule2ICS(account, password, 1)
+    spider = Schedule2ICS(account, password, 1)
     result = spider.run(semester_start)
     response = make_response(result)
     response.headers['Content-Type'] = 'text/calendar'
@@ -26,14 +26,18 @@ def json():
     password = request.args.get('pwd')
     save = request.args.get('save')
     semester_start = request.args.get('date')
-    spider = hdu_ics.Schedule2ICS(account, password, 1)
-    result = spider.run(semester_start, 'json', save)
-    if save:
-        # 跳转到保存地址
-        return redirect(url_for('static', filename = account + '.json'))
-    else:
-        # 直接返回 json 数据
+    if account == None or password == None:
+        result = {"status": "error", "msg": "please input your account or password"}
         return make_response(jsonify(result))
+    else:
+        spider = Schedule2ICS(account, password, 1)
+        result = spider.run(semester_start, 'json', save)
+        if save:
+            # 跳转到保存地址
+            return redirect(url_for('static', filename = account + '.json'))
+        else:
+            # 直接返回 json 数据
+            return make_response(jsonify(result))
 
 if __name__ == "__main__":
     port = (os.environ['HDUCPORT'] if 'HDUCPORT' in os.environ else 3000)

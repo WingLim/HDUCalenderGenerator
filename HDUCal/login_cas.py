@@ -1,10 +1,10 @@
 import json
 import requests
 import re
-import info
 from datetime import datetime
 from lxml import etree
-from des import strEnc
+from HDUCal.des import strEnc
+from HDUCal import info
 
 # 判断登录状态
 def login_status(response):

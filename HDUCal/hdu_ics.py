@@ -1,14 +1,14 @@
-import login_cas as lg
 import re
 import pytz
 import icalendar
-import info
 from lxml import etree
 from lxml.html import tostring
 from datetime import datetime, time, date
 from html.parser import HTMLParser
 from uuid import uuid1
 from dateutil.relativedelta import relativedelta
+from HDUCal import login_cas
+from HDUCal import info
 
 
 class Schedule2ICS:
