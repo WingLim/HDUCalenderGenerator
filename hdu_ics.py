@@ -118,7 +118,7 @@ class Schedule2ICS:
             ]
 
         """
-        selector = etree.HTML(response.content)
+        selector = etree.HTML(response.content.decode('gb2312'))
         table = selector.xpath("//*[@id='Table1']")[0]
         raw_courses = []
         tds = table.xpath("//td")
@@ -223,7 +223,6 @@ class Schedule2ICS:
         # 跳转到个人课表页面，获取 HTML 内容
         self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
         response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
-        # print(response.text)
         export_courses = self.exportCourse(response)
         if filetype == 'ics':
             semester_start = self.parseSemesterStart(semester_start)

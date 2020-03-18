@@ -25,7 +25,7 @@ def login_status(response):
 
 # 获取学生名字
 def get_name(response):
-    selector = etree.HTML(response.text)
+    selector = etree.HTML(response.content.decode('gb2312'))
     name = selector.xpath("//*[@id='xhxm']/text()")[0]
     name = name[:-2]
     return name
