@@ -10,7 +10,7 @@ from des import strEnc
 def login_status(response):
     now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if response.status_code == requests.codes.ok:
-        selector = etree.HTML(response.content)
+        selector = etree.HTML(response.content.decode('gb2312'))
         state = selector.xpath('/html/head/title/text()')[0]
         if state == "正方教务管理系统":
             print("{}: 登录成功".format(now_time))
