@@ -239,7 +239,7 @@ class Schedule2ICS:
                 if save:
                     # 如果保存，则写入到 static/学号.json 中
                     filename = self.account + '.json'
-                    with open('static/' + filename, 'w+', encoding='utf-8', newline='') as file:
+                    with open('data/' + filename, 'w+', encoding='utf-8', newline='') as file:
                         file.write(str(export_courses).replace("'",'"'))
                     return filename
                 else:

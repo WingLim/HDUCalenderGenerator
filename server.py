@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, make_response, jsonify, url_f
 from flask_cors import *
 from HDUCal.hdu_ics import Schedule2ICS
 import os
-app = Flask(__name__, static_url_path='/schedule')
+import json
+
+app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
 @app.route('/schedule', methods=['GET'])
@@ -10,7 +12,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/schedule/ics', methods=['POST'])
-def ics():
+def icsschedule():
     account = request.form['account']
     password = request.form['password']
     semester_start = request.form['date']
@@ -23,7 +25,7 @@ def ics():
     return response
 
 @app.route('/schedule/json', methods=['GET'])
-def json():
+def jsonschedule():
     account = request.args.get('xh')
     password = request.args.get('pwd')
     save = (request.args.get('save') if request.args.get('save') != None else 0)
@@ -39,10 +41,17 @@ def json():
         else:
             if save:
                 # 跳转到保存地址
-                return redirect(url_for('static', filename = account + '.json'))
+                return redirect(url_for(jsonscheduleapi(filename))
             else:
                 # 直接返回 json 数据
                 return make_response(jsonify(result))
+
+@app.route('/schedule/json/<name>')
+def jsonscheduleapi(name):
+    print(name)
+    with open('data/' + name + '.json', 'r', encoding='utf8') as f:
+        result = json.load(f)
+        return make_response(jsonify(result))
 
 if __name__ == "__main__":
     port = (os.environ['HDUCPORT'] if 'HDUCPORT' in os.environ else 3000)
