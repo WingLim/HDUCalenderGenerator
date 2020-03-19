@@ -218,32 +218,34 @@ class Schedule2ICS:
 
     def run(self, semester_start=info.semester_start, filetype='ics', save=0):
         # 登录
-        while not self.cas.login():
-            continue
-        # 跳转到个人课表页面，获取 HTML 内容
-        self.cas.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
-        response = self.cas.s.get(self.url + self.cas.schedule_url, headers=self.cas.headers)
-        export_courses = self.exportCourse(response)
-        if filetype == 'ics':
-            semester_start = self.parseSemesterStart(semester_start)
-            calt = self.cookCourse(export_courses, semester_start)
-            if not self.isserver:
-                with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
-                    file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
-            else:
-                return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
-        # json 格式只用于 API 服务
-        elif filetype == 'json' and self.isserver:
-            if save:
-                # 如果保存，则写入到 static/学号.json 中
-                filename = self.account + '.json'
-                with open('static/' + filename, 'w+', encoding='utf-8', newline='') as file:
-                    file.write(str(export_courses).replace("'",'"'))
-                return filename
-            else:
-                # 不保存则直接返回 list
-                return export_courses
+        islogin = self.cas.login()
+        if not islogin:
+            return islogin
+        else:
+            # 跳转到个人课表页面，获取 HTML 内容
+            self.cas.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
+            response = self.cas.s.get(self.url + self.cas.schedule_url, headers=self.cas.headers)
+            export_courses = self.exportCourse(response)
+            if filetype == 'ics':
+                semester_start = self.parseSemesterStart(semester_start)
+                calt = self.cookCourse(export_courses, semester_start)
+                if not self.isserver:
+                    with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
+                        file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
+                else:
+                    return calt.to_ical().decode('utf-8'.replace('\r\n','\n').strip())
+            # json 格式只用于 API 服务
+            elif filetype == 'json' and self.isserver:
+                if save:
+                    # 如果保存，则写入到 static/学号.json 中
+                    filename = self.account + '.json'
+                    with open('static/' + filename, 'w+', encoding='utf-8', newline='') as file:
+                        file.write(str(export_courses).replace("'",'"'))
+                    return filename
+                else:
+                    # 不保存则直接返回 list
+                    return export_courses
 
 if __name__ == "__main__":
-    spider = Schedule2ICS(info.account, info.password)
+    spider = Schedule2ICS(info.account, '777')
     spider.run()

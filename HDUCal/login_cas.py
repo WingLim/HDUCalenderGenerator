@@ -82,10 +82,10 @@ class LoginCAS:
         response = self.s.post(self.index_url, headers=self.headers, data=self.data)
         self.headers['Referer'] = response.url
         response = self.s.get(self.zf_url, headers=self.headers)
-        self.schedule_url = self.get_schedule_url(response)
         # print(response.content.decode("gb2312"))
         if login_status(response):
             self.name = get_name(response)
+            self.schedule_url = self.get_schedule_url(response)
             #print(self.name)
             return True
         else:
