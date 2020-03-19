@@ -41,7 +41,7 @@ def jsonschedule():
         else:
             if save:
                 # 跳转到保存地址
-                return redirect(url_for(jsonscheduleapi(filename))
+                return redirect(url_for(jsonscheduleapi(filename)))
             else:
                 # 直接返回 json 数据
                 return make_response(jsonify(result))
