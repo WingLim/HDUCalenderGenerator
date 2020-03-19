@@ -11,7 +11,7 @@ COPY . .
 ENV SEMESTER_START=2020-2-24 PORT=3000
 
 RUN apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev \
-    && cp info.example.py info.py \
+    && cp HDUCal/info.example.py HDUCal/info.py \
     && pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 缓存
