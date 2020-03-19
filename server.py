@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, make_response, jsonify, url_for, redirect
+from flask_cors import *
 from HDUCal.hdu_ics import Schedule2ICS
 import os
 app = Flask(__name__, static_url_path='/schedule')
+CORS(app, supports_credentials=True)
 
 @app.route('/schedule', methods=['GET'])
 def index():
