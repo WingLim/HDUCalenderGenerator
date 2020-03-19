@@ -20,19 +20,23 @@ class Schedule2ICS:
         # 是否为服务器状态
         self.isserver = isserver
         # 上课时间表
-        self.dirt_week = {
+        self.dirt_week_start = {
             1: time(8,5),
-            2: time(8,55),
             3: time(10,0),
-            4: time(10,50),
-            5: time(11,40),
             6: time(13,30),
-            7: time(14,20),
             8: time(15,15),
-            9: time(16,5),
             10: time(18,30),
-            11: time(19,20),
-            12: time(20,10)
+            11: time(19,20)
+        }
+        self.dirt_week_end = {
+            2: time(9,40),
+            4: time(11,35),
+            5: time(12,25),
+            7: time(15,5),
+            8: time(16,0),
+            9: time(16,50),
+            11: time(20,5),
+            12: time(20,55)
         }
     
     def parse_week(self, timeinfo):
@@ -79,9 +83,9 @@ class Schedule2ICS:
         # 最后一节是第几节
         course_period_end = int(course_period_list[course_period_num - 1])
         # 开始上课时间
-        dtstart_time = self.dirt_week[course_period_start]
-        # 最后一节课上课时间
-        dtend_time = self.dirt_week[course_period_end]
+        dtstart_time = self.dirt_week_start[course_period_start]
+        # 最后一节课下课时间
+        dtend_time = self.dirt_week_end[course_period_end]
         return dtstart_time, dtend_time
 
     def parse_day(self, timeinfo):
@@ -163,8 +167,13 @@ class Schedule2ICS:
         # print(raw_courses)
         return raw_courses
     
-    def get_key(self, value):
-        return [k for k,v in self.dirt_week.items() if v == value]
+    def get_key(self, type, value):
+        if type == 'start':
+            d = self.dirt_week_start
+        elif type == 'end':
+            d = d = self.dirt_week_end
+        return [k for k,v in d.items() if v == value]
+
 
     def cook_course_json(self, export_courses):
         result = []
@@ -203,8 +212,6 @@ class Schedule2ICS:
             count = (week_end - week_start + 1) if interval == 1 else (((week_end - week_start) / 2) + 1)
             course_weekday = self.parse_day(t)
             
-            # 每节课持续时间
-            lesson_time = relativedelta(minutes=45)
             # 课程日期
             dt_date = semester_start + relativedelta(weeks=(week_start - 1)) + relativedelta(
                 days=(course_weekday - 1))
@@ -215,7 +222,6 @@ class Schedule2ICS:
             dtstart_datetime = datetime.combine(dt_date, dtstart_time, tzinfo=pytz.timezone("Asia/Shanghai"))
             # 下课日期时间
             dtend_datetime = datetime.combine(dt_date, dtend_time, tzinfo=pytz.timezone("Asia/Shanghai"))
-            dtend_datetime += lesson_time
 
             event = icalendar.Event()
             # 标题/课程名
@@ -227,8 +233,10 @@ class Schedule2ICS:
             event.add('location', one['location'])
             # 详细信息
             event.add('description',
-                  '第{}-{}节\r\n教师： {}\r\n教室: {}'.format(self.get_key(dtstart_time), self.get_key(dtend_time), one['teacher'],
-                                                       one['location']))
+                  '第{}-{}节\r\n教师： {}\r\n教室: {}'.format(
+                      self.get_key('start', dtstart_time), 
+                      self.get_key('end', dtend_time), 
+                      one['teacher'], one['location']))
             event.add('dtstart', dtstart_datetime)
             event.add('dtend', dtend_datetime)
             event.add('rrule', {'freq': 'weekly', 'interval': interval, 'count': count})
@@ -236,7 +244,7 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
-    def run(self, semester_start=info.semester_start, filetype='ics', save=0):
+    def run(self, semester_start=info.semester_start, filetype='ics', save='false'):
         # 登录
         islogin = self.cas.login()
         if not islogin:
@@ -257,12 +265,12 @@ class Schedule2ICS:
             # json 格式只用于 API 服务
             elif filetype == 'json' and self.isserver:
                 result = self.cook_course_json(export_courses)
-                if save:
+                if save == 'true':
                     # 如果保存，则写入到 static/学号.json 中
-                    filename = self.account + '.json'
-                    with open('data/' + filename, 'w+', encoding='utf-8', newline='') as file:
+                    account = self.account
+                    with open('data/' + account + '.json', 'w+', encoding='utf-8', newline='') as file:
                         file.write(str(result).replace("'",'"'))
-                    return filename
+                    return account
                 else:
                     # 不保存则直接返回 list
                     return result

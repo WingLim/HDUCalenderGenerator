@@ -28,7 +28,7 @@ def icsschedule():
 def jsonschedule():
     account = request.args.get('xh')
     password = request.args.get('pwd')
-    save = (request.args.get('save') if request.args.get('save') != None else 0)
+    save = (request.args.get('save') if request.args.get('save') != None else 'false')
     semester_start = request.args.get('date')
     if account == None or password == None:
         result = {"status": "error", "msg": "please input your account or password"}
@@ -39,9 +39,10 @@ def jsonschedule():
         if isinstance(result, bool) and not result:
             return {"status": False, "msg": "登录失败，学号或密码出错"}
         else:
-            if save:
+            if save == 'true':
                 # 跳转到保存地址
-                return redirect(url_for(jsonscheduleapi(account)))
+                print(result)
+                return redirect('/schedule/json/'+result)
             else:
                 # 直接返回 json 数据
                 return make_response(jsonify(result))
