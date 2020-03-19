@@ -57,13 +57,13 @@ class Schedule2ICS:
         data = {
             'start': 0,
             'end': 0,
-            'flag': 1
+            'flag': 0
         }
         info = re.search(week_pattern, timeinfo).group()
         single = re.search('单周', info)
         double = re.search('双周', info)
         if single != None:
-            data['flag'] = 2
+            data['flag'] = 1
         elif double != None:
             data['flag'] = 2
         dat = re.findall(r'(\d+)', info)
@@ -209,7 +209,7 @@ class Schedule2ICS:
             # 单双周标记
             interval = week['flag']
             # 本学期该课程上课总数
-            count = (week_end - week_start + 1) if interval == 1 else (((week_end - week_start) / 2) + 1)
+            count = (week_end - week_start + 1) if interval == 0 else (((week_end - week_start) / 2) + 1)
             course_weekday = self.parse_day(t)
             
             # 课程日期
