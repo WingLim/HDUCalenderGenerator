@@ -7,7 +7,7 @@ from datetime import datetime, time, date
 from html.parser import HTMLParser
 from uuid import uuid1
 from dateutil.relativedelta import relativedelta
-from HDUCal import login_cas
+from HDUCal.login_cas import LoginCAS
 from HDUCal import info
 
 
@@ -15,7 +15,7 @@ class Schedule2ICS:
     def __init__(self, stu_account, stu_password, isserver=0):
         self.account = stu_account
         self.password = stu_password
-        self.login = lg.LoginCAS(stu_account, stu_password)
+        self.cas = LoginCAS(stu_account, stu_password)
         self.url = "http://jxgl.hdu.edu.cn/"
         # 是否为服务器状态
         self.isserver = isserver
@@ -218,11 +218,11 @@ class Schedule2ICS:
 
     def run(self, semester_start=info.semester_start, filetype='ics', save=0):
         # 登录
-        while not self.login.login():
+        while not self.cas.login():
             continue
         # 跳转到个人课表页面，获取 HTML 内容
-        self.login.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
-        response = self.login.s.get(self.url + self.login.schedule_url, headers=self.login.headers)
+        self.cas.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
+        response = self.cas.s.get(self.url + self.cas.schedule_url, headers=self.cas.headers)
         export_courses = self.exportCourse(response)
         if filetype == 'ics':
             semester_start = self.parseSemesterStart(semester_start)
