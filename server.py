@@ -24,7 +24,7 @@ def ics():
 def json():
     account = request.args.get('xh')
     password = request.args.get('pwd')
-    save = request.args.get('save')
+    save = (request.args.get('save') if request.args.get('save') != None else 0)
     semester_start = request.args.get('date')
     if account == None or password == None:
         result = {"status": "error", "msg": "please input your account or password"}
