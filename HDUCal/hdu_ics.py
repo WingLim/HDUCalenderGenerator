@@ -181,7 +181,7 @@ class Schedule2ICS:
             info = {}
             t = one['timeinfo']
             info['week'] = self.parse_week(t)
-            info['weekday'] = t[0,2]
+            info['weekday'] = t[0:2]
             info['start'], info['end'] = (i.strftime('%H:%M') for i in self.parse_time(t)) 
             one['timeinfo'] = info
             result.append(one)
