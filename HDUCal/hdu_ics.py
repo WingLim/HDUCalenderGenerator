@@ -126,7 +126,7 @@ class Schedule2ICS:
             [
                 {
                     'location': '第7教研楼北110', 
-                    'name': '计算机网络（甲）', 
+                    'title': '计算机网络（甲）', 
                     'teacher': '徐明', 
                     'timeinfo': '周一第1,2节{第1-16周}'
                 
@@ -144,7 +144,7 @@ class Schedule2ICS:
         course_pattern = re.compile(r'<td[^>]*>(.*)</td>')
         # 将课程信息数组转换为字典
         def convertArr(arr):
-            key = ['name', 'timeinfo', 'teacher', 'location']
+            key = ['title', 'timeinfo', 'teacher', 'location']
             return dict(zip(key, arr))
 
         for td in tds:
@@ -225,7 +225,7 @@ class Schedule2ICS:
 
             event = icalendar.Event()
             # 标题/课程名
-            event.add('summary', one['name'])
+            event.add('summary', one['title'])
             # UUID 作为独立标识
             event.add('uid', str(uuid1()) + '@HDU')
             event.add('dtstamp', datetime.now())

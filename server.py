@@ -49,7 +49,6 @@ def jsonschedule():
 
 @app.route('/schedule/json/<name>')
 def jsonscheduleapi(name):
-    print(name)
     with open('data/' + name + '.json', 'r', encoding='utf8') as f:
         result = json.load(f)
         return make_response(jsonify(result))
