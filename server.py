@@ -17,7 +17,9 @@ def icsschedule():
     password = request.form['password']
     semester_start = request.form['date']
     # print(semester_start)
-    spider = Schedule2ICS(account, password, 1)
+    year = '2020-2021'
+    term = '1'
+    spider = Schedule2ICS(account, password, year, term, 1)
     result = spider.run(semester_start)
     response = make_response(result)
     response.headers['Content-Type'] = 'text/calendar'
