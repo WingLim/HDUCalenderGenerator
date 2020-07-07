@@ -12,9 +12,11 @@ from HDUCal import info
 
 
 class Schedule2ICS:
-    def __init__(self, stu_account, stu_password, isserver=0):
+    def __init__(self, stu_account, stu_password, year, term, isserver=0):
         self.account = stu_account
         self.password = stu_password
+        self.year = year
+        self.term = term
         self.cas = LoginCAS(stu_account, stu_password)
         self.url = "http://jxgl.hdu.edu.cn/"
         # 是否为服务器状态
@@ -37,6 +39,18 @@ class Schedule2ICS:
             9: time(16,50),
             11: time(20,5),
             12: time(20,55)
+        }
+        self.base_data = {
+            '__EVENTTARGET': 'xnd',
+            '__VIEWSTATE': '',
+            '__EVENTVALIDATION': '',
+            'xnd': '',
+            'xqd': ''
+        }
+        self.headers = {
+            'Referer': self.url + self.cas.schedule_url,
+            'Connection': 'keep-alive',
+            'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.133 Safari/534.16'
         }
     
     def parse_week(self, timeinfo):
@@ -244,6 +258,15 @@ class Schedule2ICS:
             calt.add_component(event)
         return calt
 
+    def set_base_data(self, response):
+        selector = etree.HTML(response.content)
+        viewstate = selector.xpath("//*[@id='__VIEWSTATE']/@value")[0]
+        eventvalidation = selector.xpath("//*[@id='__EVENTVALIDATION']/@value")[0]
+        self.base_data['__VIEWSTATE'] = viewstate
+        self.base_data['__EVENTVALIDATION'] = eventvalidation
+        self.base_data['xnd'] = self.year
+        self.base_data['xqd'] = self.term
+
     def run(self, semester_start=info.semester_start, filetype='ics', save='false'):
         # 登录
         islogin = self.cas.login()
@@ -253,6 +276,9 @@ class Schedule2ICS:
             # 跳转到个人课表页面，获取 HTML 内容
             self.cas.headers['Referer'] = self.url + 'xs_main.aspx?xh=' + self.account
             response = self.cas.s.get(self.url + self.cas.schedule_url, headers=self.cas.headers)
+            if self.year != None and self.term != None:
+                self.set_base_data(response)
+                response = self.cas.s.post(self.url + self.cas.schedule_url, data=self.base_data, headers=self.headers)
             export_courses = self.export_course(response)
             if filetype == 'ics':
                 semester_start = self.parse_semester_start(semester_start)
