@@ -30,11 +30,16 @@ def jsonschedule():
     password = request.args.get('pwd')
     save = (request.args.get('save') if request.args.get('save') != None else 'false')
     semester_start = request.args.get('date')
+    year = request.args.get('year')
+    term = request.args.get('term')
+    if year == None and term == None:
+        year = '2020-2021'
+        term = '1'
     if account == None or password == None:
         result = {"status": "error", "msg": "please input your account or password"}
         return make_response(jsonify(result))
     else:
-        spider = Schedule2ICS(account, password, 1)
+        spider = Schedule2ICS(account, password, year, term, 1)
         result = spider.run(semester_start, 'json', save)
         if isinstance(result, bool) and not result:
             return {"status": False, "msg": "登录失败，学号或密码出错"}
