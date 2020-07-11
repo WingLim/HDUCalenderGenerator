@@ -21,7 +21,7 @@ def icsschedule():
     # print(semester_start)
     year = '2020-2021'
     term = '1'
-    raw_schedule = GainSchedule(account, password, year, term)
+    raw_schedule = GainSchedule(account, password, year, term).run()
     result = Schedule2ICS(raw_schedule).run(semester_start)
     response = make_response(result)
     response.headers['Content-Type'] = 'text/calendar'
@@ -42,7 +42,7 @@ def jsonschedule():
         result = {"status": "error", "msg": "please input your account or password"}
         return make_response(jsonify(result))
     else:
-        raw_schedule = GainSchedule(account, password, year, term)
+        raw_schedule = GainSchedule(account, password, year, term).run()
         result = Schedule2JSON(account, raw_schedule).run(save)
         if isinstance(result, bool) and not result:
             return {"status": False, "msg": "登录失败，学号或密码出错"}
