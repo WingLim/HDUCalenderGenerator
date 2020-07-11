@@ -1,7 +1,7 @@
 import re
 from lxml import etree
 from lxml.html import tostring
-from html.parser import HTMLParser
+from html.parser import unescape
 from HDUCal.login_cas import LoginCAS
 from HDUCal.utils import convert_arr
 
@@ -36,7 +36,7 @@ class GainSchedule:
 
         for td in tds:
             # 将 Element 对象转换成 string 字符串
-            raw = HTMLParser().html.unescape(tostring(td).decode())
+            raw = unescape(tostring(td).decode())
             # 用正则匹配获取 <td></td> 标签中的课程信息
             reg = re.search(course_pattern, raw)
             # 不存在则跳过
