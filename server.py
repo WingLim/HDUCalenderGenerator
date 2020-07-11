@@ -33,7 +33,6 @@ def jsonschedule():
     account = request.args.get('xh')
     password = request.args.get('pwd')
     save = (request.args.get('save') if request.args.get('save') != None else 'false')
-    semester_start = request.args.get('date')
     year = request.args.get('year')
     term = request.args.get('term')
     if year == None and term == None:
