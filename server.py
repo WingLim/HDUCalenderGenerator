@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, make_response, jsonify, url_for, redirect
 from flask_cors import *
-from HDUCal.hdu_ics import Schedule2ICS
+from HDUCal.schedule2ics import Schedule2ICS
+from HDUCal.schedule2json import Schedule2JSON
+from HDUCal.gain_schedule import GainSchedule
 import os
 import json
 
@@ -19,8 +21,8 @@ def icsschedule():
     # print(semester_start)
     year = '2020-2021'
     term = '1'
-    spider = Schedule2ICS(account, password, year, term, 1)
-    result = spider.run(semester_start)
+    raw_schedule = GainSchedule(account, password, year, term)
+    result = Schedule2ICS(raw_schedule).run(semester_start)
     response = make_response(result)
     response.headers['Content-Type'] = 'text/calendar'
     response.headers['Content-Disposition'] = "attachment; filename=\"{}.ics\"".format(account)
@@ -41,8 +43,8 @@ def jsonschedule():
         result = {"status": "error", "msg": "please input your account or password"}
         return make_response(jsonify(result))
     else:
-        spider = Schedule2ICS(account, password, year, term, 1)
-        result = spider.run(semester_start, 'json', save)
+        raw_schedule = GainSchedule(account, password, year, term)
+        result = Schedule2JSON(account, raw_schedule).run(save)
         if isinstance(result, bool) and not result:
             return {"status": False, "msg": "登录失败，学号或密码出错"}
         else:
