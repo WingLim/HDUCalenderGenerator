@@ -101,11 +101,11 @@ class Schedule2ICS:
     def run(self, semester_start=info.semester_start):
         semester_start = self.parse_semester_start(semester_start)
         calt = self.cook_courses(self.raw_schedule, semester_start)
-        if not self.isserver:
-            with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
-                file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
-        else:
-            return calt.to_ical().decode('utf-8'.replace('\r\n', '\n').strip())
+        #if not self.isserver:
+        #    with open('output.ics', 'w+', encoding='utf-8', newline='') as file:
+        #        file.write(calt.to_ical().decode('utf-8'.replace('\r\n', '\n')).strip())
+        #else:
+        return calt.to_ical().decode('utf-8'.replace('\r\n', '\n').strip())
 
 if __name__ == "__main__":
     spider = Schedule2ICS(info.account, '777')
