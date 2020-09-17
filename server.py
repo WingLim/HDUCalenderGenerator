@@ -20,7 +20,7 @@ def icsschedule():
     semester_start = request.form['date']
     # print(semester_start)
     year = '2020-2021'
-    term = '1'
+    term = '2'
     raw_schedule = GainSchedule(account, password, year, term).run()
     result = Schedule2ICS(raw_schedule).run(semester_start)
     response = make_response(result)
@@ -39,7 +39,10 @@ def jsonschedule():
         year = '2020-2021'
         term = '1'
     if account == None or password == None:
-        result = {"status": "error", "msg": "please input your account or password"}
+        result = {
+            "status": "error",
+            "msg": "please input your account or password"
+        }
         return make_response(jsonify(result))
     else:
         raw_schedule = GainSchedule(account, password, year, term).run()
