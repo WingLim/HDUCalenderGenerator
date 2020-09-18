@@ -7,7 +7,7 @@ from HDUCal.utils import convert_arr
 
 
 class GainSchedule:
-    def __init__(self, stu_account, stu_password, year, term):
+    def __init__(self, stu_account, stu_password, year=None, term=None):
         self.account = stu_account
         self.password = stu_password
         self.year = year
@@ -51,7 +51,7 @@ class GainSchedule:
                 raw_schedule.append(convert_arr(arr[5:]))
                 continue
             raw_schedule.append(convert_arr(arr))
-        # print(raw_courses)
+        #print(raw_schedule)
         return raw_schedule
 
     def set_base_data(self, response):

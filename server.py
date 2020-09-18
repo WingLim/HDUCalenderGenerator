@@ -20,9 +20,9 @@ def icsschedule():
     semester_start = request.form['date']
     # print(semester_start)
     year = '2020-2021'
-    term = '2'
-    raw_schedule = GainSchedule(account, password, year, term).run()
-    result = Schedule2ICS(raw_schedule).run(semester_start)
+    term = '1'
+    raw_schedule = GainSchedule(account, password).run()
+    result = Schedule2ICS(raw_schedule, 1).run(semester_start)
     response = make_response(result)
     response.headers['Content-Type'] = 'text/calendar'
     response.headers['Content-Disposition'] = "attachment; filename=\"{}.ics\"".format(account)
