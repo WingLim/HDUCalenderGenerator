@@ -70,10 +70,10 @@ class LoginCAS:
 
     # 获取学生个人课表地址
     def get_schedule_url(self, response):
-        selector = etree.HTML(response.content)
-        schedule_url = selector.xpath("//*[@id='headDiv']/ul/li[6]/ul/li[2]/a/@href")[0]
+        name = get_name(response)
+        schedule_url = 'xskbcx.aspx?xh=' + self.account + '&xm=' + name + '&gnmkdm=N121603'
         return schedule_url
-    
+
     def login(self):
         self.data['lt'], self.data['execution'] = self.get_lt_execution()
         self.data['rsa'] = self.caculate_rsa()
