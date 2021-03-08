@@ -107,8 +107,4 @@ $ docker run -itd \
 $ python server.py
 ```
 
-服务将在 `domain.com:9898/ics/` 开启，监听 `9898` 端口
-
-端口在 [server.py#L31](https://github.com/WingLim/HDUCalenderGenerator/blob/9dc344cb9416c2bf3f6d271a3c8fea61113cdac9/server.py#L31) 处修改
-
-后缀即 `/ics/` 在 [server.py#L8](https://github.com/WingLim/HDUCalenderGenerator/blob/9dc344cb9416c2bf3f6d271a3c8fea61113cdac9/server.py#L8) 和 [server.py#L16](https://github.com/WingLim/HDUCalenderGenerator/blob/9dc344cb9416c2bf3f6d271a3c8fea61113cdac9/server.py#L16) 处修改
+服务将在 `domain.com:3000/schedule` 开启，监听 `3000` 端口
