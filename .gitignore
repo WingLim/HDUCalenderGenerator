@@ -6,3 +6,4 @@ __pycache__
 .vscode
 .~README.md
 .idea
+venv
