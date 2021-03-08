@@ -1,10 +1,10 @@
-import json
 import requests
 import re
 from datetime import datetime
 from lxml import etree
 from HDUCal.des import strEnc
 from HDUCal import info
+
 
 # 判断登录状态
 def login_status(response):
@@ -58,14 +58,14 @@ class LoginCAS:
         selector = etree.HTML(response.content)
         template = selector.xpath("//*[@id='password_template']/text()")[0]
         # print(template)
-        lt = re.search('LT-.*-cas',template).group()
-        execution = re.search('e[0-9]s[0-9]',template).group()
+        lt = re.search('LT-.*-cas', template).group()
+        execution = re.search('e[0-9]s[0-9]', template).group()
         return lt, execution
         
     # 计算 rsa
     def caculate_rsa(self):
         total = self.account + self.password + self.data['lt']
-        rsa = strEnc(total,"1","2","3")
+        rsa = strEnc(total, "1", "2", "3")
         return rsa
 
     # 获取学生个人课表地址
@@ -86,10 +86,11 @@ class LoginCAS:
         if login_status(response):
             self.name = get_name(response)
             self.schedule_url = self.get_schedule_url(response)
-            #print(self.name)
+            # print(self.name)
             return True
         else:
             return False
+
 
 if __name__ == "__main__":
     spider = LoginCAS(info.account, info.password)
