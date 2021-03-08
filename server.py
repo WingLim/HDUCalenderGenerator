@@ -37,7 +37,7 @@ def jsonschedule():
     term = request.args.get('term')
     if year == None and term == None:
         year = '2020-2021'
-        term = '1'
+        term = '2'
     if account == None or password == None:
         result = {
             "status": "error",
@@ -63,6 +63,7 @@ def jsonscheduleapi(name):
     with open('data/' + name + '.json', 'r', encoding='utf8') as f:
         result = json.load(f)
         return make_response(jsonify(result))
+
 
 if __name__ == "__main__":
     port = (os.environ['HDUCPORT'] if 'HDUCPORT' in os.environ else 3000)

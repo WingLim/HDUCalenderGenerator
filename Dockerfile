@@ -8,7 +8,7 @@ WORKDIR /root
 COPY . .
 
 # 设置默认环境变量
-ENV SEMESTER_START=2020-2-24 PORT=3000
+ENV SEMESTER_START=2021-3-01 PORT=3000
 
 RUN apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev \
     && cp HDUCal/info.example.py HDUCal/info.py \

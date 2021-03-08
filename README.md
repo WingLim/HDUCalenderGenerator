@@ -17,7 +17,7 @@ $ pip install -r requirements.txt
 from datetime import date
 
 # 学期开始时间
-semester_start = date(2020,2,24)
+semester_start = date(2021, 3, 1)
 # 学号
 account = ""
 # 密码
@@ -92,7 +92,7 @@ $ docker run -itd \
 | -------------- | --------- | ------------------------- |
 | HDUCPORT       | 3000      | 服务开启的端口            |
 | HDUCDEBUG      | True      | Flask 是否开启 debug 模式 |
-| SEMESTER_START | 2020-2-24 | 学期开始日期              |
+| SEMESTER_START | 2021-3-01 | 学期开始日期              |
 
 注：`SEMESTER_START` 要参照默认值格式 `YYYY-M-DD`
 
