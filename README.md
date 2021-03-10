@@ -1,4 +1,8 @@
 # HDUCalenderGenerator
+[![build](https://github.com/WingLim/HDUCalenderGenerator/actions/workflows/build.yaml/badge.svg)](https://github.com/WingLim/HDUCalenderGenerator/actions/workflows/build.yaml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/winglim/hducalgen?logo=docker)](https://hub.docker.com/repository/docker/winglim/hducalgen)
+[![Github Package](https://img.shields.io/static/v1?label=WingLim&message=Github%20Package&color=blue&logo=github)](https://github.com/users/WingLim/packages/container/package/hducalgen)
+
 Generate HDU schedule icalendar
 
 ## 本地使用
