@@ -7,3 +7,4 @@ __pycache__
 .~README.md
 .idea
 venv
+.DS_Store
